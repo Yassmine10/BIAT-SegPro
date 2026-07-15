@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BIAT SegPro – Intelligent Customer Segmentation Platform for Retail Banking
 
 BIAT SegPro is a production-ready, intelligent customer segmentation platform built for **BIAT (Banque Internationale Arabe de Tunisie)**. Designed for Retail Banking Analysts, it establishes a modular, secure, and extensible MVC foundation for rule-based and AI-driven clustering models.
@@ -166,3 +167,6 @@ Returns the status of the API instance and database checks.
 3. **Role-Based Access Control (RBAC):** Restricts admin panels `/api/users` to the `Administrator` role on both frontend (UI components and middleware redirects) and backend (FastAPI security dependencies).
 4. **Input Sanitization & Constraints:** All request properties are strictly validated using Pydantic schemas on the backend, and client-side schemas using Zod.
 5. **CORS Protocol:** Restricted header & origin permissions for browser clients.
+=======
+# BIAT-SegPro
+>>>>>>> aa25be5dc2093c017af3c0d71c95edf74aed00ab
