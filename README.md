@@ -1,168 +1,235 @@
-# BIAT SegPro – Intelligent Customer Segmentation Platform for Retail Banking
+# BIAT SegPro — Plateforme Intelligente de Segmentation Clientèle pour la Banque de Détail
 
-BIAT SegPro is a production-ready, intelligent customer segmentation platform built for **BIAT (Banque Internationale Arabe de Tunisie)**. Designed for Retail Banking Analysts, it establishes a modular, secure, and extensible MVC foundation for rule-based and AI-driven clustering models.
+BIAT SegPro est une plateforme d'intelligence d'affaires et de segmentation de la clientèle conçue spécifiquement pour la **BIAT (Banque Internationale Arabe de Tunisie)**. Conçue pour les analystes de la banque de détail et les administrateurs, elle établit une base modulaire, sécurisée et extensible (architecture MVC) pour l'exécution de modèles de clustering statistiques et basés sur l'intelligence artificielle.
 
 ---
 
-## 🚀 Quick Start (Docker Compose)
+## 🎯 Vision et Objectifs du Projet
 
-The entire ecosystem is containerized and can be launched with a single command. 
+Dans le secteur bancaire de détail, la compréhension fine des comportements des clients est essentielle pour maximiser la valeur et personnaliser l'offre. **BIAT SegPro** fournit aux analystes de la banque de détail des outils puissants pour segmenter le portefeuille clients à l'aide de critères statistiques (modèle RFM) et d'algorithmes d'apprentissage automatique (Clustering K-Means, etc.).
 
-### Prerequisites
-- [Docker](https://www.docker.com/get-started) installed and running
-- [Docker Compose](https://docs.docker.com/compose/install/)
+La plateforme offre une séparation claire des rôles :
+*   **Administrateurs :** Gestion de la plateforme, contrôle des accès et supervision des intégrations de données.
+*   **Analystes de Banque de Détail :** Création, exécution et analyse des campagnes de segmentation, exploration des profils clients et exportation des cohortes cibles.
 
-### Launching the Application
-Run the following command at the root of the project:
+---
+
+## 🏗️ Architecture du Système
+
+Le projet utilise une architecture moderne et modulaire basée sur le modèle MVC (Modèle-Vue-Contrôleur) avec une séparation stricte entre le client (Frontend) et le serveur (Backend).
+
+```mermaid
+graph TD
+    subgraph Frontend [Next.js 15 - Client]
+        UI[Interface Utilisateur & Components]
+        Context[AuthProvider & Contexts]
+        Mid[Middleware de Sécurité]
+    end
+
+    subgraph Backend [FastAPI - Serveur]
+        Ctrl[Contrôleurs / API Routers]
+        Srv[Services de Logique Métier]
+        Repo[Dépôts / Pattern Repository]
+        Models[Modèles SQLAlchemy]
+    end
+
+    subgraph Base de Données [PostgreSQL 15]
+        DB[(Tables & Index)]
+    end
+
+    UI --> Context
+    Context --> Mid
+    Mid -->|Requêtes HTTP + JWT| Ctrl
+    Ctrl --> Srv
+    Srv --> Repo
+    Repo --> Models
+    Models -->|ORM Operations| DB
+```
+
+---
+
+## 🚀 Démarrage Rapide (Docker Compose)
+
+L'ensemble de l'écosystème est conteneurisé et peut être lancé avec une seule commande.
+
+### Prérequis
+*   [Docker](https://www.docker.com/get-started) installé et en cours d'exécution.
+*   [Docker Compose](https://docs.docker.com/compose/install/).
+
+### Lancement de l'Application
+Exécutez la commande suivante à la racine du projet :
 
 ```bash
 docker-compose up --build
 ```
 
-This starts:
-1. **PostgreSQL Database** on port `5432` (with automatic health check configuration).
-2. **FastAPI Backend** on port `8000` (with auto-seeding of database schemas & admin/analyst users).
-3. **Next.js 15 Frontend** on port `3000` (development server with hot reload).
+Cette commande démarre :
+1.  **Base de données PostgreSQL 15** sur le port `5432` (avec configuration automatique de vérification de santé).
+2.  **Backend FastAPI** sur le port `8000` (avec alimentation automatique des schémas de base de données et des utilisateurs d'exemple).
+3.  **Frontend Next.js 15** sur le port `3000` (serveur de développement avec rechargement à chaud).
 
-### Default Logins for Testing
-When the backend container boots up, it automatically seeds the database with the following accounts:
+### Comptes d'accès par défaut pour les tests
+Lors du démarrage, la base de données est automatiquement alimentée avec les comptes suivants :
 
-| Role | Email | Password |
-|---|---|---|
-| **Administrator** | `admin@biat.com.tn` | `admin1234` |
-| **Retail Banking Analyst** | `analyst@biat.com.tn` | `analyst1234` |
+| Rôle | Email | Mot de passe |
+| :--- | :--- | :--- |
+| **Administrateur** | `admin@biat.com.tn` | `admin1234` |
+| **Analyste de Banque de Détail** | `analyst@biat.com.tn` | `analyst1234` |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Stack Technique
 
 ### Frontend
-- **Framework:** Next.js 15 (App Router, Client & Server Components)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4 (Curated banking colors)
-- **Forms & Validation:** React Hook Form & Zod
-- **API Client:** Axios (With automatic interceptors for token routing)
-- **Icons:** Lucide React
+*   **Framework :** Next.js 15 (App Router, Server & Client Components)
+*   **Langage :** TypeScript (Type-safe)
+*   **Styling :** Tailwind CSS v4 (Palette de couleurs personnalisée pour la BIAT)
+*   **Formulaires & Validation :** React Hook Form & Zod
+*   **Client API :** Axios (Avec intercepteurs automatiques pour la gestion des tokens)
+*   **Gestion des Sessions :** Cookies sécurisés HTTP-only gérés via un Middleware Next.js
 
 ### Backend
-- **Framework:** Python, FastAPI
-- **ORM:** SQLAlchemy (Declarative Base 2.0 Mapping)
-- **Migrations:** Alembic (Pre-configured structure)
-- **Validation:** Pydantic v2
-- **Security:** JWT (python-jose), Password Encryption (Direct Bcrypt for Python 3.13 stability)
+*   **Framework :** Python, FastAPI
+*   **ORM :** SQLAlchemy (Declarative Base 2.0 Mapping)
+*   **Migrations :** Alembic (Structure préconfigurée)
+*   **Validation :** Pydantic v2
+*   **Sécurité :** JWT (python-jose), chiffrement des mots de passe avec `bcrypt` (sécurisé et optimisé pour Python 3.13)
 
-### Database
-- **Engine:** PostgreSQL 15
+### Base de Données
+*   **Moteur :** PostgreSQL 15
 
 ---
 
-## 📁 Project Structure
+## 📁 Structure du Projet
 
-BIAT SegPro follows a strict MVC design pattern to isolate routing, business logic, data persistence, and UI rendering.
+Le projet respecte une structure MVC rigoureuse pour isoler les routes, la logique métier, la persistance des données et le rendu de l'interface utilisateur.
 
 ```text
 BIAT SegPro/
-├── docker-compose.yml             # Container Orchestration
-├── README.md                      # Platform Documentation
-├── backend/                       # Python FastAPI Application
-│   ├── Dockerfile                 # Slim Linux Python 3.13 image build
-│   ├── requirements.txt           # Python backend dependencies
-│   ├── .env                       # Local environment variables
+├── docker-compose.yml             # Orchestration des conteneurs Docker
+├── README.md                      # Documentation principale de la plateforme
+├── backend/                       # Application Python FastAPI
+│   ├── Dockerfile                 # Build d'image Python 3.13 de base slim
+│   ├── requirements.txt           # Dépendances Python
+│   ├── .env                       # Variables d'environnement locales
 │   └── app/
-│       ├── config/                # BaseSettings configuration
-│       ├── database/              # SQLAlchemy session and engine instantiation
-│       ├── models/                # Database schemas (SQLAlchemy models)
-│       ├── schemas/               # Request/Response DTO validators (Pydantic v2)
-│       ├── repositories/          # Direct DB CRUD operations (Repository Pattern)
-│       ├── services/              # Business logic & validations (Service layer)
-│       ├── controllers/           # API Routers & routes definitions
-│       ├── utils/                 # Security utilities (Bcrypt & JWT tokens)
-│       └── main.py                # FastAPI bootstrapper, CORS, and Lifespan seeder
+│       ├── config/                # Configuration de l'application (BaseSettings)
+│       ├── database/              # Initialisation de la session et du moteur SQLAlchemy
+│       ├── models/                # Schémas de base de données (Modèles SQLAlchemy)
+│       ├── schemas/               # Validateurs DTO de requêtes/réponses (Pydantic v2)
+│       ├── repositories/          # Opérations CRUD directes (Pattern Repository)
+│       ├── services/              # Logique métier et validations (Couche Service)
+│       ├── controllers/           # API Routers et définitions des routes
+│       ├── utils/                 # Utilitaires de sécurité (Mots de passe & Tokens JWT)
+│       └── main.py                # Point d'entrée FastAPI (CORS, seeder de démarrage)
 │
-└── frontend/                      # Next.js 15 Client Application
-    ├── Dockerfile                 # Node Alpine developer image build
-    ├── package.json               # Frontend dependencies list
-    ├── tsconfig.json              # TypeScript compilation rules
-    ├── postcss.config.mjs         # Tailwind processor
+└── frontend/                      # Application Client Next.js 15
+    ├── Dockerfile                 # Build de l'image de développement Node
+    ├── package.json               # Dépendances frontend
+    ├── tsconfig.json              # Règles de compilation TypeScript
+    ├── postcss.config.mjs         # Processeur Tailwind
     └── src/
-        ├── app/                   # App Router (login, dashboard, pages)
-        ├── components/            # Reusable UI components
-        ├── context/               # Global Authentication State context (AuthProvider)
-        ├── hooks/                 # Reusable React hooks
-        ├── services/              # Axios instance configuration & auth API services
-        ├── types/                 # TypeScript typings
-        └── middleware.ts          # Server-side routing guard checking token cookies
+        ├── app/                   # App Router (pages de connexion, tableaux de bord)
+        ├── components/            # Composants UI réutilisables
+        ├── context/               # Contexte d'authentification global (AuthProvider)
+        ├── hooks/                 # Hooks React réutilisables
+        ├── services/              # Instance Axios et services d'API
+        ├── types/                 # Déclarations des types TypeScript
+        └── middleware.ts          # Middleware de sécurité pour le routage côté serveur
 ```
 
 ---
 
-## 🔌 REST API Reference
+## 🔌 Référence de l'API REST
 
-The backend exposes fully validated OpenAPI endpoints. Once the containers are running, you can access the interactive documentation at:
+Le backend expose des points de terminaison OpenAPI entièrement validés. Une fois les conteneurs démarrés, vous pouvez accéder à la documentation interactive sur :
 👉 **[http://localhost:8000/api/docs](http://localhost:8000/api/docs) (Swagger)**  
 👉 **[http://localhost:8000/api/redoc](http://localhost:8000/api/redoc) (ReDoc)**
 
-### Authentication Endpoints
+### Points d'accès d'authentification
 
 #### `POST /api/auth/login`
-Authenticates user credentials and sets up a session.
-- **Request Body:**
-  ```json
-  {
-    "email": "analyst@biat.com.tn",
-    "password": "analyst1234"
-  }
-  ```
-- **Response (200 OK):** Returns token details, user role, and user profile metadata.
+Authentifie les identifiants de l'utilisateur et génère un jeton de session JWT.
+*   **Corps de la requête :**
+    ```json
+    {
+      "email": "analyst@biat.com.tn",
+      "password": "analyst1234"
+    }
+    ```
+*   **Réponse (200 OK) :** Retourne les détails du jeton, le rôle de l'utilisateur et ses métadonnées de profil.
 
 #### `POST /api/auth/logout`
-Acknowledges client session termination.
-- **Headers:** `Authorization: Bearer <token>`
-- **Response (200 OK):** Acknowledges success.
+Met fin à la session de l'utilisateur.
+*   **En-têtes :** `Authorization: Bearer <token>`
+*   **Réponse (200 OK) :** Message de succès.
 
 #### `GET /api/auth/me`
-Retrieves current logged-in analyst's profile.
-- **Headers:** `Authorization: Bearer <token>`
-- **Response (200 OK):** User details.
+Récupère le profil de l'analyste ou de l'administrateur connecté.
+*   **En-têtes :** `Authorization: Bearer <token>`
+*   **Réponse (200 OK) :** Détails de l'utilisateur connecté.
 
 ---
 
-### User Administration Endpoints
+### Administration des Utilisateurs
 
 #### `POST /api/users`
-Creates a new analyst account.
-- **Access Rule:** Restricted to `Administrator` role.
-- **Request Body:**
-  ```json
-  {
-    "first_name": "Hamdi",
-    "last_name": "Gharbi",
-    "email": "hamdi.gharbi@biat.com.tn",
-    "password": "securepassword123",
-    "role": "Retail Banking Analyst"
-  }
-  ```
-- **Response (201 Created):** Created User details without the password hash.
+Crée un nouveau compte utilisateur (Analyste ou Administrateur).
+*   **Règle d'accès :** Limité au rôle `Administrator`.
+*   **Corps de la requête :**
+    ```json
+    {
+      "first_name": "Hamdi",
+      "last_name": "Gharbi",
+      "email": "hamdi.gharbi@biat.com.tn",
+      "password": "securepassword123",
+      "role": "Retail Banking Analyst"
+    }
+    ```
+*   **Réponse (201 Created) :** Détails de l'utilisateur créé (sans le mot de passe haché).
 
 #### `GET /api/users`
-Retrieves list of all platform operators.
-- **Access Rule:** Requires authenticated session.
-- **Response (200 OK):** Array of User objects.
+Récupère la liste de tous les utilisateurs enregistrés sur la plateforme.
+*   **Règle d'accès :** Requiert une session authentifiée.
+*   **Réponse (200 OK) :** Tableau d'objets utilisateur.
 
 ---
 
-### Health & Support Endpoints
+### Points d'accès de Santé (Health Check)
 
 #### `GET /health`
-Returns the status of the API instance and database checks.
-- **Response (200 OK):** `{"status": "healthy", "service": "BIAT SegPro"}`
+Retourne l'état de l'instance de l'API et de la connexion à la base de données.
+*   **Réponse (200 OK) :** `{"status": "healthy", "service": "BIAT SegPro"}`
 
 ---
 
-## 🔒 Security Standards Implemented
+## 🔒 Standards de Sécurité Implémentés
 
-1. **JWT Session Management:** Stateless login sessions with automatic 24h token expiry.
-2. **Robust Password Hashing:** Uses `bcrypt` hashes to protect credentials in transit/database.
-3. **Role-Based Access Control (RBAC):** Restricts admin panels `/api/users` to the `Administrator` role on both frontend (UI components and middleware redirects) and backend (FastAPI security dependencies).
-4. **Input Sanitization & Constraints:** All request properties are strictly validated using Pydantic schemas on the backend, and client-side schemas using Zod.
-5. **CORS Protocol:** Restricted header & origin permissions for browser clients.
+1.  **Gestion de Session JWT :** Sessions d'authentification sans état (stateless) avec expiration automatique des tokens après 24 heures.
+2.  **Hachage Robuste des Mots de Passe :** Utilisation de l'algorithme `bcrypt` pour sécuriser les mots de passe stockés en base de données.
+3.  **Contrôle d'Accès Basé sur les Rôles (RBAC) :** Les routes sensibles telles que `/api/users` sont restreintes aux utilisateurs ayant le rôle `Administrator` au niveau du frontend (Middleware Next.js) et du backend (Dépendances de sécurité FastAPI).
+4.  **Assainissement des Entrées :** Toutes les requêtes HTTP entrantes sont validées à l'aide de schémas Pydantic côté backend et de schémas Zod côté client.
+5.  **Protocole CORS :** Restrictions sur les en-têtes et les domaines d'origine autorisés pour sécuriser les requêtes provenant du navigateur.
+
+---
+
+## 📅 Feuille de Route (Roadmap)
+
+```mermaid
+gantt
+    title Feuille de Route - BIAT SegPro
+    dateFormat  YYYY-MM
+    section Phase 1
+    Fondation Auth & RBAC (Next.js & FastAPI) :active, p1, 2026-06, 2026-07
+    section Phase 2
+    Intégration Données Clients & Modélisation DB :   p2, 2026-07, 2026-08
+    section Phase 3
+    Moteur de Segmentation (RFM & K-Means) :   p3, 2026-08, 2026-09
+    section Phase 4
+    Dashboards Décisionnels & Exports Marketing :   p4, 2026-09, 2026-10
+```
+
+*   **Phase 1 : Fondation (Complétée)** — Authentification sécurisée, rôles applicatifs, configuration Docker Compose et structure de base MVC.
+*   **Phase 2 : Intégration Données** — Conception du pipeline de chargement des données clients de la BIAT et extension du modèle de base de données.
+*   **Phase 3 : Moteur de Segmentation** — Implémentation du scoring RFM (Récence, Fréquence, Montant) et intégration de modèles d'IA de clustering non-supervisés.
+*   **Phase 4 : Dashboards & Exportation** — Visualisations graphiques riches des segments de clientèle et fonctionnalités d'exportation des listes de ciblage pour les campagnes marketing.
