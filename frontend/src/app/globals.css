@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-biat-blue: #002e6e;
+  --color-biat-blue-hover: #001d4a;
+  --color-biat-orange: #e87722;
+  --color-biat-orange-hover: #c76115;
+  --color-biat-navy: #001533;
+  --color-biat-light: #f8fafc;
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0f19;
+    --foreground: #f1f5f9;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Custom Utilities or animations */
+@layer utilities {
+  .glassmorphism {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .glassmorphism {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
